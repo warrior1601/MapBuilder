@@ -5,12 +5,10 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkTriangle.h>
-
 //C++ Header Files
 #include <cmath>
 // Project Header files
 #include "terrain_type.h"
-
 class terrain_square
 {
 public:

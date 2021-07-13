@@ -7,6 +7,9 @@
 
 #include "ui_mainwindow.h" // in orer to click "Go To Slot on mainwindow.ui this need to be before the header file"
 #include "mainwindow.h"
+
+using namespace std;
+
 //-------------Constructor------------//
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -32,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->Z_STL_Actor_Rotate->setEnabled(false);
     ui->Terrain_Type_Selector->setEnabled(false);
     ui->Texture_Type_Selector->setEnabled(false);
+
+    PopulateListofAvailableTerrainTypes();
 
 }
 //--------------Destructor-------------//
@@ -265,6 +270,12 @@ void MainWindow::on_Load_STL_released()
     std::string FilePath = fileName.toUtf8().constData();
     std::ifstream myFile(FilePath);
 
+    std::size_t found0 = FilePath.find_last_of("/");
+    std::size_t found1 = FilePath.find_last_of(".");
+
+    LoadedSTLForTerrain = FilePath.substr(found0+1, found1-found0-1);
+    std::cout << LoadedSTLForTerrain << std::endl;
+
     if (myFile.is_open())
     {
         ui->Display_Window->GetRenderWindow()->RemoveRenderer( renderer );
@@ -273,15 +284,16 @@ void MainWindow::on_Load_STL_released()
         vtkSmartPointer<vtkUnstructuredGrid> Ug = vtkSmartPointer<vtkUnstructuredGrid>::New();
         vtkSmartPointer<vtkDataSetMapper> Mapper = vtkSmartPointer<vtkDataSetMapper>::New();
         vtkSmartPointer<vtkActor> Actor = vtkSmartPointer<vtkActor>::New();
+        AddingTerrainSTL = Actor;
 
         Mapper->SetInputConnection( readerSTL->GetOutputPort() );
         readerSTL->Update();
-        Actor->SetMapper(Mapper);
-        Actor->GetProperty()->EdgeVisibilityOff();
+        AddingTerrainSTL->SetMapper(Mapper);
+        AddingTerrainSTL->GetProperty()->EdgeVisibilityOff();
         //Actor->GetProperty()->SetColor( colors->GetColor3d("Green").GetData() );
-        renderer->AddActor(Actor);
+        renderer->AddActor(AddingTerrainSTL);
 
-        std::cout << Actor->GetMapper()->GetInput()->GetNumberOfCells() <<std::endl;
+        //std::cout << Actor->GetMapper()->GetInput()->GetNumberOfCells() <<std::endl;
 
         ui->Display_Window->GetRenderWindow()->AddRenderer( renderer );
     }
@@ -371,50 +383,97 @@ void MainWindow::UpdateSpinBoxes()
 
 void MainWindow::on_X_STL_Shift_valueChanged(double arg1)
 {
-    double Offset[] = {arg1, FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[1], FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[2]};
-    FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOffset(Offset);
-    FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    if(calibrateSTL == false)
+    {
+        double Offset[] = {arg1, FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[1], FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[2]};
+        FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOffset(Offset);
+        FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    }
+    else
+    {
+        double *Position = AddingTerrainSTL->GetPosition();
+        AddingTerrainSTL->SetPosition( arg1, Position[1], Position[2]);
+    }
     renderWindow->Render();
 }
 
 void MainWindow::on_Y_STL_Shift_valueChanged(double arg1)
 {
-    double Offset[] = {FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[0], arg1, FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[2]};
-    FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOffset(Offset);
-    FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    if(calibrateSTL == false)
+    {
+        double Offset[] = {FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[0], arg1, FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[2]};
+        FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOffset(Offset);
+        FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    }
+    else
+    {
+        double *Position = AddingTerrainSTL->GetPosition();
+        AddingTerrainSTL->SetPosition( Position[0], arg1, Position[2]);
+    }
     renderWindow->Render();
 }
 
 void MainWindow::on_Z_STL_Shift_valueChanged(double arg1)
 {
-    double Offset[] = {FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[0], FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[1], arg1};
-    FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOffset(Offset);
-    FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    if(calibrateSTL == false)
+    {
+        double Offset[] = {FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[0], FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorOffset()[1], arg1};
+        FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOffset(Offset);
+        FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    }
+    else
+    {
+        double *Position = AddingTerrainSTL->GetPosition();
+        AddingTerrainSTL->SetPosition( Position[0], Position[1], arg1);
+    }
     renderWindow->Render();
 }
 
 void MainWindow::on_X_STL_Scale_valueChanged(double arg1)
 {
+    if(calibrateSTL == false)
+    {
     double Scale[] = {arg1, FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorScale()[1], FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorScale()[2]};
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorScale(Scale);
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
-
+    }
+    else
+    {
+        double *Scale = AddingTerrainSTL->GetScale();
+        AddingTerrainSTL->SetScale( arg1, Scale[1], Scale[2] );
+    }
     renderWindow->Render();
 }
 
 void MainWindow::on_Y_STL_Scale_valueChanged(double arg1)
 {
+    if(calibrateSTL == false)
+    {
     double Scale[] = {FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorScale()[0], arg1, FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorScale()[2]};
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorScale(Scale);
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    }
+    else
+    {
+        double *Scale = AddingTerrainSTL->GetScale();
+        AddingTerrainSTL->SetScale( Scale[0], arg1, Scale[2] );
+    }
     renderWindow->Render();
 }
 
 void MainWindow::on_Z_STL_Scale_valueChanged(double arg1)
 {
+    if(calibrateSTL == false)
+    {
     double Scale[] = {FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorScale()[0], FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActorScale()[1], arg1};
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorScale(Scale);
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().UpdateTerrainTypeActor( FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainSquarePosition() );
+    }
+    else
+    {
+        double *Scale = AddingTerrainSTL->GetScale();
+        AddingTerrainSTL->SetScale( Scale[0], Scale[1], arg1 );
+    }
     renderWindow->Render();
 }
 
@@ -453,9 +512,17 @@ void MainWindow::on_X_STL_Actor_Rotate_valueChanged(int value)
     static double X_Rotation= 0.0;
     int Temp = value;
     value = value-X_Rotation;
+
+    if(calibrateSTL == false)
+    {
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActor()->RotateWXYZ(double (value), 1, 0, 0);
     double *Ornt = FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActor()->GetOrientation();
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOrientation(Ornt);
+    }
+    else
+    {
+       AddingTerrainSTL->RotateWXYZ(double (value), 1, 0, 0);
+    }
     X_Rotation = Temp;
     renderWindow->Render();
 }
@@ -466,10 +533,16 @@ void MainWindow::on_Y_STL_Actor_Rotate_valueChanged(int value)
     int Temp = double (value);
     value = value-Y_Rotation;
 
-
+    if(calibrateSTL == false)
+    {
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActor()->RotateWXYZ(double (value), 0, 1, 0 );
     double *Ornt = FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActor()->GetOrientation();
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOrientation(Ornt);
+    }
+    else
+    {
+        AddingTerrainSTL->RotateWXYZ(double (value), 0, 1, 0);
+    }
     Y_Rotation = Temp;
     renderWindow->Render();
 }
@@ -480,10 +553,16 @@ void MainWindow::on_Z_STL_Actor_Rotate_valueChanged(int value)
     int Temp = double (value);
     value = value-Z_Rotation;
 
+    if(calibrateSTL == false)
+    {
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActor()->RotateWXYZ(double (value), 0, 0, 1 );
     double *Ornt = FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().GetActor()->GetOrientation();
     FirstMap.GetMap()[SelectedRow - 1][SelectedColumn - 1].GetTerrainType().SetActorOrientation(Ornt);
-
+    }
+    else
+    {
+        AddingTerrainSTL->RotateWXYZ(double (value), 0, 0, 1);
+    }
     Z_Rotation = Temp;
     renderWindow->Render();
 }
@@ -676,4 +755,87 @@ void MainWindow::on_Terrain_Color_Change_clicked()
         FirstMap.SetColour(red, green, blue);
     }
     renderWindow->Render();
+}
+
+void MainWindow::PopulateListofAvailableTerrainTypes()
+{
+    // Read from text file
+    ifstream terraintypes("../../source/terraintypes.txt");
+    std::string myText;
+
+    while (getline (terraintypes, myText))
+    {
+        std::size_t found = myText.find(":");
+        std::string terrainName = myText.substr(0,found);
+        //Add list of names to drop down menu
+        ui->Terrain_Type_Selector->addItem(QString::fromStdString(terrainName));
+    }
+    // Close the file
+    terraintypes.close();
+}
+
+void MainWindow::on_SaveTerrain_clicked()
+{
+    std::string terraintypes("../../source/terraintypes.txt");
+    std::ofstream file_out;
+
+    file_out.open(terraintypes, std::ios_base::app);
+
+    file_out << fixed
+             << setprecision(3)
+             << LoadedSTLForTerrain << ": "
+             << ui->X_STL_Shift->value() - 0.500 << ", "
+             << ui->Y_STL_Shift->value() - 0.500 << ", "
+             << ui->Z_STL_Shift->value() << ", "
+             << ui->X_STL_Scale->value() << ", "
+             << ui->Y_STL_Scale->value() << ", "
+             << ui->Z_STL_Scale->value() << std::endl;
+
+    PopulateListofAvailableTerrainTypes();
+}
+
+void MainWindow::on_calibrateTerrain_toggled(bool checked)
+{
+    if(ui->calibrateTerrain->checkState() == 2)
+    {
+        if((ui->Row_Selector->value() == 0) && (ui->Column_Selector->value() == 0) )
+        {
+            ui->X_STL_Scale->setEnabled(true);
+            ui->Y_STL_Scale->setEnabled(true);
+            ui->Z_STL_Scale->setEnabled(true);
+            ui->X_STL_Shift->setEnabled(true);
+            ui->Y_STL_Shift->setEnabled(true);
+            ui->Z_STL_Shift->setEnabled(true);
+            ui->X_STL_Actor_Rotate->setEnabled(true);
+            ui->Y_STL_Actor_Rotate->setEnabled(true);
+            ui->Z_STL_Actor_Rotate->setEnabled(true);
+
+            ui->Row_Selector->setEnabled(false);
+            ui->Column_Selector->setEnabled(false);
+
+            calibrateSTL = true;
+        }
+    }
+    else
+    {
+        if((ui->Row_Selector->value() == 0) && (ui->Column_Selector->value() == 0) )
+        {
+            ui->X_STL_Scale->setEnabled(false);
+            ui->Y_STL_Scale->setEnabled(false);
+            ui->Z_STL_Scale->setEnabled(false);
+            ui->X_STL_Shift->setEnabled(false);
+            ui->Y_STL_Shift->setEnabled(false);
+            ui->Z_STL_Shift->setEnabled(false);
+            ui->X_STL_Actor_Rotate->setEnabled(false);
+            ui->Y_STL_Actor_Rotate->setEnabled(false);
+            ui->Z_STL_Actor_Rotate->setEnabled(false);
+
+            ui->Row_Selector->setEnabled(true);
+            ui->Column_Selector->setEnabled(true);
+
+            calibrateSTL = false;
+
+            // remove actor and set new();
+        }
+    }
 }

@@ -26,7 +26,6 @@ public:
     void SetActorOffset(double *aOffset);
     void SetActorOrientation(double *aOrientation);
     void SetActorScale(double *aScale);
-    void SetRotationalPoint(double x, double y, double z);
 //-----Get Functions-----//
     std::string GetName();
     vtkSmartPointer<vtkActor> GetActor();
@@ -50,8 +49,6 @@ private:
 
     vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
     vtkSmartPointer<vtkSTLReader> TerrainSTLReader = vtkSmartPointer<vtkSTLReader>::New();
-
-
 };
 
 #endif // TERRAIN_TYPE_H

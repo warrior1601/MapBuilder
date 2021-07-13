@@ -42,106 +42,49 @@ terrain_type::~terrain_type() {}
 void terrain_type::SetName(std::string aName)
 {
     Name = aName;
-    //Sets default values for offset and Scaling
-    if(Name.compare("Grass") == 0)
+
+    ifstream terraintypes("../../source/terraintypes.txt");
+    std::string myText;
+
+    while (getline (terraintypes, myText))
     {
-        ActorOffset[0] = 0.017;
-        ActorOffset[1] = 0.007;
-        ActorOffset[2] = 0.090;
+        std::size_t found = myText.find(":");
+        std::string terrainName = myText.substr(0,found);
+        if (Name.compare(terrainName) == 0)
+        {
+            //grab info
+            std::string StringActorOffset0 = myText.substr(found+2,5);
+            std::string StringActorOffset1 = myText.substr(found+9,5);
+            std::string StringActorOffset2 = myText.substr(found+16,5);
 
-        ActorScale[0] = 0.042;
-        ActorScale[1] = 0.042;
-        ActorScale[2] = 0.042;
-        return;
-    }
+            std::string StringActorScale0 = myText.substr(found+23,5);
+            std::string StringActorScale1 = myText.substr(found+30,5);
+            std::string StringActorScale2 = myText.substr(found+37,5);
 
-    if(Name.compare("Vine Tree") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
+            /*std::cout << Name <<": "<< StringActorOffset0 << ", " <<
+                                     StringActorOffset1 << ", " <<
+                                     StringActorOffset2 << ", " <<
 
-        ActorScale[0] = 0.174;
-        ActorScale[1] = 0.216;
-        ActorScale[2] = 0.300;
-        return;
-    }
-    if(Name.compare("Corner Wall") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
+                                     StringActorScale0 << ", " <<
+                                     StringActorScale1 << ", " <<
+                                     StringActorScale2 << endl;*/
 
-        ActorScale[0] = 0.02;
-        ActorScale[1] = 0.02;
-        ActorScale[2] = 0.02;
-        return;
-    }
-    if(Name.compare("Wall Straight") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
+            ActorOffset[0] = std::stod(StringActorOffset0);
+            ActorOffset[1] = std::stod(StringActorOffset1);
+            ActorOffset[2] = std::stod(StringActorOffset2);
 
-        ActorScale[0] = 0.02;
-        ActorScale[1] = 0.02;
-        ActorScale[2] = 0.02;
-        return;
-    }
-    if(Name.compare("Stone Floor") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
+            ActorScale[0] = std::stod(StringActorScale0);
+            ActorScale[1] = std::stod(StringActorScale1);
+            ActorScale[2] = std::stod(StringActorScale2);
 
-        ActorScale[0] = 0.02;
-        ActorScale[1] = 0.02;
-        ActorScale[2] = 0.02;
-        return;
-    }
-    if(Name.compare("Pillar Square") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
-
-        ActorScale[0] = 0.02;
-        ActorScale[1] = 0.02;
-        ActorScale[2] = 0.02;
-        return;
-    }
-    if(Name.compare("Wall Arch") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
-
-        ActorScale[0] = 0.02;
-        ActorScale[1] = 0.02;
-        ActorScale[2] = 0.02;
-        return;
-    }
-    if(Name.compare("Wall Curved") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
-
-        ActorScale[0] = 0.02;
-        ActorScale[1] = 0.02;
-        ActorScale[2] = 0.02;
-        return;
-    }
-    if(Name.compare("Well on Tile") == 0)
-    {
-        ActorOffset[0] = 0.0;
-        ActorOffset[1] = 0.0;
-        ActorOffset[2] = 0.0;
-
-        ActorScale[0] = 0.02;
-        ActorScale[1] = 0.02;
-        ActorScale[2] = 0.02;
-        return;
+            // Close the file
+            terraintypes.close();
+            return;
+        }
+        else
+        {
+            // do nothing this loop, keep searching for info
+        }
     }
 }
 
@@ -165,7 +108,6 @@ void terrain_type::SetActorScale(double *aScale)
     ActorScale[1] = aScale[1];
     ActorScale[2] = aScale[2];
 }
-
 //-----Get Functions-----//
 std::string terrain_type::GetName(){ return (Name); }
 
@@ -224,5 +166,3 @@ void terrain_type::UpdateTerrainTypeActor(double *aTerrainSquarePosition)
         TerrainActor->SetScale(ActorScale[0], ActorScale[1], ActorScale[2]);
     }
 }
-
-

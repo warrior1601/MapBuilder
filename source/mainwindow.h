@@ -22,9 +22,7 @@
 #include <QMouseEvent>
 // Header files from vtk
 #include <vtkActorCollection.h>
-
 #include <vtkAppendPolyData.h>
-
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
 #include <vtkCubeAxesActor.h>
@@ -34,12 +32,13 @@
 #include <vtkProp.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
-
 #include <vtkTransform.h>
-
 #include <vtkVRMLExporter.h>
 #include <vtkVRMLImporter.h>
 // C++ Header files
+#include <iomanip>
+#include <iostream>
+#include <fstream>
 // Projct Header files
 #include "grid.h"
 #include "mouse_interactor.h"
@@ -110,6 +109,9 @@ private slots:
     void on_Z_Texture_Translation_valueChanged(double arg1);
 
     void on_Terrain_Color_Change_clicked();
+    void on_SaveTerrain_clicked();
+
+    void on_calibrateTerrain_toggled(bool checked);
 
 private:
 //-------Private Functions--------//
@@ -118,12 +120,18 @@ private:
     void OrientationWidgetInIt();
     void UpdateSpinBoxes();
     void mousePressEvent(QMouseEvent *event);
+    void PopulateListofAvailableTerrainTypes();
 
 //-------Private Members---------//
     Ui::MainWindow *ui;
     grid FirstMap;
     int SelectedRow = 0;
     int SelectedColumn = 0;
+    bool calibrateSTL = false;
+
+    std::string LoadedSTLForTerrain;
+
+    vtkSmartPointer<vtkActor> AddingTerrainSTL = vtkSmartPointer<vtkActor>::New();
 
     vtkSmartPointer<vtkSTLReader> readerSTL = vtkSmartPointer<vtkSTLReader>::New();
     vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
@@ -140,6 +148,7 @@ private:
 
     std::vector <std::string> ListOfLoadedTerrainTypes;
     std::vector <vtkSmartPointer<vtkSTLReader> > ListOfLoadedSTLs;
+    std::vector <terrain_type> ListOfAvailableTerrainTpes;
 
     vtkSmartPointer<vtkTransform> TransformTexture = vtkSmartPointer<vtkTransform>::New();
     vtkSmartPointer<vtkAppendPolyData> AppendedPolyData = vtkSmartPointer<vtkAppendPolyData>::New();

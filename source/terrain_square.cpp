@@ -133,5 +133,3 @@ void terrain_square::RemoveTexure()
     Actor->GetProperty()->SetColor( Actor->GetProperty()->GetColor() );
     texture = vtkSmartPointer<vtkTexture>::New();
 }
-
-

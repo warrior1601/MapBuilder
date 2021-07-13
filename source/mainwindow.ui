@@ -424,8 +424,14 @@
         </item>
         <item>
          <widget class="QPushButton" name="Save">
+          <property name="toolTip">
+           <string>ctrl+s</string>
+          </property>
           <property name="text">
            <string>Save</string>
+          </property>
+          <property name="shortcut">
+           <string>Ctrl+S</string>
           </property>
          </widget>
         </item>
@@ -611,7 +617,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="Scale">
          <attribute name="title">
@@ -1089,11 +1095,32 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="Load_STL">
-        <property name="text">
-         <string>Load STL</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_21">
+        <item>
+         <widget class="QPushButton" name="Load_STL">
+          <property name="text">
+           <string>Load Terrain STL</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="SaveTerrain">
+          <property name="text">
+           <string>Add Tarrain to text file</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="calibrateTerrain">
+          <property name="toolTip">
+           <string>Only use when calibrating terrain and Row and Column selector are set to 0. Uncheck after adding Terrain to text file to deleted the loaded STL.</string>
+          </property>
+          <property name="text">
+           <string>Calibrate Terrain</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QGroupBox" name="Square_Selector">
@@ -1165,58 +1192,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_14">
         <item>
-         <widget class="QComboBox" name="Terrain_Type_Selector">
-          <item>
-           <property name="text">
-            <string>No Terrain Type</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Corner Wall</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Grass</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Pillar Square</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Stone Floor</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Vine Tree</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Wall Arch</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Wall Curved</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Well on Tile</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Wall Straight</string>
-           </property>
-          </item>
-         </widget>
+         <widget class="QComboBox" name="Terrain_Type_Selector"/>
         </item>
         <item>
          <widget class="QComboBox" name="Texture_Type_Selector">
@@ -1392,12 +1368,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>1047</x>
-     <y>439</y>
+     <x>1042</x>
+     <y>651</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1007</x>
-     <y>498</y>
+     <x>1046</x>
+     <y>711</y>
     </hint>
    </hints>
   </connection>
