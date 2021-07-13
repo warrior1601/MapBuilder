@@ -8,3 +8,15 @@ Another feature of this program is that the height of each grid square can be ed
 Once a scene is built it can be exported as a VRML file. This is a simple way to store the scene with all the chosen color options. Unfortunately, VRML files are not editable with this program. Future updates to this program will see that the save file will be a text file that can be loaded by the program with instructions on how to rebuild your scene.
 
 # ScreenShots
+
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/OpeningScreen.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/10x10Grid.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/MouseSelector.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/TerrainTypeDropDown.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/AddngStoneFloorAndChangingColor.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/OldMonastery.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/InfectedByBhaal.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/ChoppingDownTheTreeOfLife.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/CreatingHills.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/ElevationFilter.png "When the program openswe can see a large viewing field and control off to the right")
+![alt text](https://github.com/warrior1601/MapBuilder/blob/main/screenshots/FinishedHill.png "When the program openswe can see a large viewing field and control off to the right")
